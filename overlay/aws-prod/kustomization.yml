@@ -1,0 +1,36 @@
+resources:
+  - ../../base/istory-app
+
+namespace: istory-prod
+
+patches:
+  - path: patch-lb-annotations.yml
+    target:
+      kind: Service
+      name: istory-app-lb
+  - path: patch-deploy.yml
+    target:
+      kind: Deployment
+      name: istory-app-deploy
+  - path : path-app-config.yml
+    target:
+      kind: ConfigMap
+      name: istory-app-config
+
+images:
+  - name: kimjinho1234/istory
+    newTag: latest
+
+configMapGenerator:
+  - name: istory-app-config
+    behavior: replace
+    envs:
+      - .env.app.config
+
+secretGenerator:
+  - name: istory-app-secret
+    envs:
+      - .env.secret
+
+generatorOptions:
+  disableNameSuffixHash: true
